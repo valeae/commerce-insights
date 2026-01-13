@@ -84,17 +84,3 @@ commerce-insights/
 | `MONGO_USER` | Usuario de MongoDB (opcional) | `admin` |
 | `MONGO_PASSWORD` | Contraseña de MongoDB (opcional) | `password123` |
 
-## Próximas características
-
-- [ ] Dashboard de análisis de comercios
-- [ ] Reportes de transacciones
-- [ ] API REST con Express
-- [ ] Exportación de datos
-- [ ] Caché con Redis
-
-## Recursos
-
-- [Documentación de MongoDB](https://docs.mongodb.com/)
-- [Documentación de Mongoose](https://mongoosejs.com/)
-- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-- [TypeScript](https://www.typescriptlang.org/)
