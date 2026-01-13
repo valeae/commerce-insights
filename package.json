@@ -1,0 +1,29 @@
+{
+  "name": "commerce-insights",
+  "version": "1.0.0",
+  "description": "Sistema para recopilar y analizar datos de comercios",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "commerce",
+    "mongodb",
+    "data-collection"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^7.5.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "ts-node": "^10.9.1",
+    "@types/node": "^20.5.0",
+    "@types/mongoose": "^5.11.97"
+  }
+}
