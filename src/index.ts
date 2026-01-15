@@ -3,9 +3,7 @@ import { executeBatchAggregation } from './services/aggregation.service';
 import { saveResultsToJson } from './services/file.service';
 import { getBatchConfig } from './config/batch.config';
 import { 
-  simpleCountPipeline, 
   simpleDocumentExtractionPipeline,
-  transactionsByStatusPipeline 
 } from './aggregations/sample.aggregation';
 
 async function main(): Promise<void> {
