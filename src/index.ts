@@ -1,33 +1,72 @@
-import { connectDatabase, getTransactionCount, disconnectDatabase } from './db';
+import { connectDatabase, disconnectDatabase } from './db';
+import { executeBatchAggregation } from './services/aggregation.service';
+import { saveResultsToJson } from './services/file.service';
+import { getBatchConfig } from './config/batch.config';
+import { 
+  simpleCountPipeline, 
+  simpleDocumentExtractionPipeline,
+  transactionsByStatusPipeline 
+} from './aggregations/sample.aggregation';
 
 async function main(): Promise<void> {
-  console.log('='.repeat(50));
-  console.log('Commerce Insights - Data Collection System');
-  console.log('='.repeat(50));
-  console.log();
+  const startTime = Date.now();
   
+  console.log('='.repeat(50));
+  console.log('Commerce Insights - Batch Aggregation System');
+  console.log('='.repeat(50));
+
   try {
     // Conectar a la base de datos
     await connectDatabase();
     console.log();
-    
-    // Obtener cantidad de registros en transaction
-    console.log('Obteniendo información de la colección "transaction"...');
-    const count = await getTransactionCount();
-    
-    if (count !== null) {
-      console.log(`\n✓ Registros en la colección "transaction": ${count.toLocaleString()}`);
-    } else {
-      console.log('\nNo se pudo obtener la cantidad de registros.');
-    }
-    
+
+    // Obtener configuración de lotes
+    const batchConfig = getBatchConfig();
+    console.log('Configuración de lotes:');
+    console.log(`  - Tamaño de lote: ${batchConfig.batchSize}`);
+    console.log(`  - Delay entre lotes: ${batchConfig.processingDelay}ms`);
+    console.log(`  - Máximo de lotes: ${batchConfig.maxBatches || 'Sin límite'}`);
     console.log();
+
+    // Ejecutar agregación sencilla de ejemplo
+    console.log('🔹 Ejecutando agregación sencilla de ejemplo...\n');
+    const simpleResult = await executeBatchAggregation({
+      collectionName: 'transaction',
+      pipeline: simpleDocumentExtractionPipeline,
+      config: batchConfig,
+      aggregationName: 'simple_document_extraction',
+      batchStrategy: 'pre-aggregation'
+    });
+
+    // Guardar resultados en JSON
+    await saveResultsToJson(simpleResult, batchConfig.outputDirectory);
+    console.log();
+
+    // Ejemplo de agregación más compleja (comentada por defecto)
+    // Descomentar si quieres ejecutar también esta agregación
+    /*
+    console.log('🔹 Ejecutando agregación por estado...\n');
+    const statusResult = await executeBatchAggregation({
+      collectionName: 'transaction',
+      pipeline: transactionsByStatusPipeline,
+      config: batchConfig,
+      aggregationName: 'transactions_by_status',
+      batchStrategy: 'post-aggregation'
+    });
+
+    await saveResultsToJson(statusResult);
+    console.log();
+    */
+
+    const executionTime = ((Date.now() - startTime) / 1000).toFixed(2);
     console.log('='.repeat(50));
-    
+    console.log(`✓ Proceso completado en ${executionTime} segundos`);
+    console.log('='.repeat(50));
   } catch (error) {
-    console.error('Error en la ejecución:', (error as Error).message);
+    console.error('\n✗ Error en la ejecución:', (error as Error).message);
+    console.error((error as Error).stack);
+    process.exit(1);
   } finally {
-    // Desconectar de la base de datos
     await disconnectDatabase();
   }
 }

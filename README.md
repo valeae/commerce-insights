@@ -1,6 +1,6 @@
-# Commerce Insights - Sistema de Recopilación de Datos
+# Commerce Insights - Sistema de Agregaciones por Lotes
 
-Sistema para recopilar y analizar datos de la base de datos MongoDB de comercios.
+Sistema para ejecutar agregaciones en MongoDB por lotes configurables y almacenar los resultados en archivos JSON.
 
 ## Requisitos
 
@@ -43,8 +43,9 @@ npm run dev
 ```
 
 Este comando:
-- Prueba la conexión a MongoDB
-- Obtiene el número de documentos en la colección `transaction`
+- Conecta a MongoDB
+- Ejecuta agregaciones por lotes configurables
+- Guarda los resultados en archivos JSON en la carpeta `results/`
 
 ### Compilar el proyecto
 
@@ -60,27 +61,55 @@ Genera los archivos compilados en la carpeta `dist/`
 npm start
 ```
 
+## Sistema de Agregaciones por Lotes
+
+El sistema permite ejecutar agregaciones de MongoDB procesando los datos en lotes configurables. Esto es útil para:
+
+- Procesar grandes volúmenes de datos sin sobrecargar la memoria
+- Controlar el ritmo de procesamiento
+- Manejar timeouts en agregaciones complejas
+
+### Estrategias de Procesamiento
+
+1. **pre-aggregation**: Procesa documentos en lotes antes de aplicar la agregación
+   - Útil para agregaciones simples o extracción de datos
+   - Cada lote se procesa independientemente
+
+2. **post-aggregation**: Ejecuta la agregación completa y luego procesa resultados por lotes
+   - Útil para agregaciones complejas que agrupan datos
+   - Primero se ejecuta toda la agregación, luego se dividen los resultados
+
 ## Estructura del Proyecto
 
 ```
 commerce-insights/
 ├── src/
-│   ├── config.ts          # Configuración
-│   ├── db.ts              # Funciones de conexión y consultas
-│   └── index.ts           # Script principal
-├── dist/                  # Archivos compilados (generado por tsc)
-├── package.json           # Dependencias
-├── tsconfig.json          # Configuración de TypeScript
-├── .env.example          # Ejemplo de configuración
-├── README.md             # Este archivo
-└── .gitignore            # Archivos ignorados por git
+│   ├── aggregations/          # Pipelines de agregación
+│   │   └── sample.aggregation.ts
+│   ├── config/                # Configuraciones
+│   │   └── batch.config.ts    # Configuración de lotes
+│   ├── services/              # Servicios
+│   │   ├── aggregation.service.ts  # Servicio de agregaciones
+│   │   └── file.service.ts         # Servicio de archivos JSON
+│   ├── config.ts              # Configuración general
+│   ├── db.ts                  # Funciones de conexión
+│   └── index.ts               # Script principal
+├── results/                   # Resultados JSON (generado)
+├── dist/                      # Archivos compilados (generado)
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
 ## Variables de Entorno
 
-| Variable | Descripción | Ejemplo |
-|----------|-------------|---------|
+| Variable | Descripción | Valor por Defecto |
+|----------|-------------|-------------------|
 | `MONGO_URI` | URI de conexión a MongoDB | `mongodb://localhost:27017/commerce_db` |
-| `MONGO_USER` | Usuario de MongoDB (opcional) | `admin` |
-| `MONGO_PASSWORD` | Contraseña de MongoDB (opcional) | `password123` |
+| `MONGO_USER` | Usuario de MongoDB (opcional) | - |
+| `MONGO_PASSWORD` | Contraseña de MongoDB (opcional) | - |
+| `BATCH_SIZE` | Tamaño de cada lote | `1000` |
+| `BATCH_DELAY` | Delay en ms entre lotes | `500` |
+| `MAX_BATCHES` | Número máximo de lotes (opcional) | Sin límite |
+| `OUTPUT_DIRECTORY` | Directorio para guardar resultados | `results` |
 
