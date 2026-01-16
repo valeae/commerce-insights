@@ -37,7 +37,7 @@ async function main(): Promise<void> {
     });
 
     // Guardar resultados en JSON
-    await saveResultsToJson(simpleResult, batchConfig.outputDirectory);
+    await saveResultsToJson(simpleResult, batchConfig.outputDirectory || 'results');
     console.log();
 
     // Ejemplo de agregación más compleja (comentada por defecto)
