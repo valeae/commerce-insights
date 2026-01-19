@@ -10,10 +10,16 @@ async function main() {
     await connectDatabase();
     const config = getBatchConfig();
     
+    // Configurar sin límite de lotes para extraer todas las llaves
+    const configWithoutLimit = {
+      ...config,
+      maxBatches: undefined // Sin límite de lotes
+    };
+
     const result = await executeBatchAggregation({
       collectionName: 'transaction',
       pipeline: extractPublicKeysPipeline,
-      config,
+      config: configWithoutLimit,
       aggregationName: 'extract_public_keys',
       batchStrategy: 'post-aggregation'
     });

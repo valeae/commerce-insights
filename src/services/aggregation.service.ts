@@ -85,8 +85,9 @@ export async function executeBatchAggregation(
       const allAggregationResults = await collection.aggregate(pipeline).toArray();
       const totalResults = allAggregationResults.length;
       const totalBatches = Math.ceil(totalResults / config.batchSize);
-      const maxBatches = config.maxBatches || totalBatches;
-      const batchesToProcess = Math.min(totalBatches, maxBatches);
+      const batchesToProcess = config.maxBatches 
+        ? Math.min(totalBatches, config.maxBatches) 
+        : totalBatches;
 
       console.log(`   Total de resultados de agregación: ${totalResults}`);
       console.log(`   Procesando ${batchesToProcess} lotes de resultados\n`);

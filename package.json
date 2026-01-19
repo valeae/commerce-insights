@@ -8,6 +8,7 @@
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "extract-keys": "ts-node src/commands/extract-public-keys.ts",
+    "analyze-transactions": "ts-node src/commands/analyze-transactions.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
